@@ -53,6 +53,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Topic :: Utilities',
+        'Environment :: X11 Applications :: GTK',
     ],
     extras_require=dict(
         # List additional groups of dependencies here (e.g. development
