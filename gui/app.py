@@ -71,6 +71,18 @@ class ElementList(Gtk.ListBox):
     def get_selected_document(self):
         return self.get_selected_row().get_children()[0].get_document()
 
+    def clear(self):
+        print('clearing')
+        for el in self.get_children():
+            self.remove(el)
+
+    def update(self, documents):
+        print('updating')
+        for doc in documents:
+            el = ListElement(doc)
+            self.add(el)
+            el.show()
+
 
 def key_pressed_is(event, key_string):
     """Vim like binding language
@@ -114,7 +126,6 @@ class Gui(Gtk.Window):
 
         Gtk.Window.__init__(self)
         self.lines = 50
-        self.list_elements = []
 
         self.db = papis.database.get()
 
@@ -159,8 +170,9 @@ class Gui(Gtk.Window):
             2
         )
 
+        self.documents = documents
         if documents:
-            self.update_list(documents)
+            self.listbox.update(documents)
 
         Gtk.main()
 
@@ -169,15 +181,6 @@ class Gui(Gtk.Window):
 
     def get_selected_document(self):
         return self.listbox.get_selected_document()
-
-    def update_list(self, documents):
-        print('Creating ListElements')
-        self.list_elements = [
-            ListElement(doc) for doc in documents
-        ]
-        for el in self.list_elements:
-            self.listbox.add(el)
-        self.show_all()
 
     def focus_filter_prompt(self):
         self.entry.set_icon_from_icon_name(
@@ -199,7 +202,6 @@ class Gui(Gtk.Window):
         entry.get_text()
 
     def handle_entry_key(self, w, el):
-        print('invalidating')
         self.listbox.invalidate_filter()
 
     def handle_key(self, w, event):
@@ -213,6 +215,10 @@ class Gui(Gtk.Window):
         elif key_pressed_is(event, '<ctrl-f>'):
             print('\tfocusing')
             self.focus_filter_prompt()
+        elif key_pressed_is(event, '<ctrl-c>'):
+            self.listbox.clear()
+        elif key_pressed_is(event, '<ctrl-u>'):
+            self.listbox.update(self.documents)
         elif key_pressed_is(event, '<ctrl-q>'):
             Gtk.main_quit()
 
