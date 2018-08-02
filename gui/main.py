@@ -1,7 +1,12 @@
 import gui.app
 import papis.database
+import click
+import papis.cli
 
-def main():
+@click.command()
+@click.help_option('-h', '--help')
+@papis.cli.query_option()
+def main(query):
     gui.app.Gui(
-        documents=papis.database.get().query_dict(dict(author='einstein'))
+        documents=papis.database.get().query(query)
     )
